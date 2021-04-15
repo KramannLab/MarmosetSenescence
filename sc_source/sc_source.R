@@ -1,9 +1,11 @@
-# Copyright (c) [2020] [Monica T. Hannani]
+# Copyright (c) [2021] [Monica T. Hannani]
 # mhannani@ukaachen.de
 
 
-# Cell type coloring scheme
-# Colors inspired by https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
+#---- Cell type coloring scheme
+
+# Source 
+# https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
 cell.type.colors = c('Podocytes' = '#000000',
                     'Proximal tubular cells 1' = '#70036a',
                     'Proximal tubular cells 2' = '#911eb4',
@@ -68,6 +70,7 @@ cell.type.abbrev.top.colors = c('PD' = '#000000',
 
 
 #---- Enhanced DoHeatmap function (modified)
+
 DoHeatmap4 = function(SeuratObject, GSC, assay = 'RNA', ident, show_hr = TRUE, title = 'Expression') {
   suppressPackageStartupMessages(library(ComplexHeatmap))
   
@@ -141,6 +144,7 @@ DoHeatmap4 = function(SeuratObject, GSC, assay = 'RNA', ident, show_hr = TRUE, t
 
 
 #---- Genesorter
+
 run_genesorter = function(sc, assay = 'RNA', slot = 'data', write.file = FALSE, out.dir = '.', file.name.prefix = NULL){
   
   # Get specificity score (specScore) and conditional probability of expression (condGeneProb)
@@ -176,6 +180,7 @@ run_genesorter = function(sc, assay = 'RNA', slot = 'data', write.file = FALSE, 
 
 
 #---- PanglaoDB bar chart
+
 panglao_db = function(matrix, species = 'hs', n = 50, out.dir = '.', file.name.prefix = NULL, return.genes = FALSE){
   library(stringr, quietly = TRUE)
   library(ggplot2, quietly = TRUE)
@@ -246,6 +251,7 @@ panglao_db = function(matrix, species = 'hs', n = 50, out.dir = '.', file.name.p
 
 
 #---- Correlation heatmap with meta data
+
 correlation_heatmap = function(object, conditionVector, assay = 'RNA', cellTypeColors = cell.type.colors){
   suppressPackageStartupMessages(library(ComplexHeatmap))
   suppressPackageStartupMessages(library(stringr))
@@ -294,6 +300,7 @@ correlation_heatmap = function(object, conditionVector, assay = 'RNA', cellTypeC
 
 
 #---- Process extracellular-matrix (ECM) scores provided in Naba et al., 2016 (PMID: 26163349)
+
 processNABA = function(filepath = '../data/NABAgsets.xls') {
   con = file(filepath, 'r')
   naba_gsets = list()
@@ -313,6 +320,7 @@ processNABA = function(filepath = '../data/NABAgsets.xls') {
 
 
 #---- Doughnut plot of senescence scores (uses abbreviated top annotations!)
+
 doughnut_plot = function(object, score, cutOff, group, cellTypes = NA){
   suppressPackageStartupMessages(library(ggplot2))
   suppressPackageStartupMessages(library(tidyr))
