@@ -8,10 +8,11 @@ library(Seurat)
 library(ggplot2)
 library(viridis)
 library(cowplot)
-library(dplyr)
+'%ni%' = Negate('%in%')
 indir = '~/Dropbox/UKA/marmoset/'
 outdir = '~/Dropbox/Marmoset/figures/qc_plots/'
 setwd(indir)
+source('MarmosetSenescence/sc_source/sc_source.R')
 
 sc = readRDS(file = 'marmoset.cca.integration.filter.reclust.annotated.rds')
 
@@ -101,12 +102,104 @@ dev.off()
 
 
 
-data = data.frame(cell = names(Idents(sc)), 
-                  UMI = as.numeric(sc$nCount_RNA), 
-                  gene = as.numeric(sc$nFeature_RNA),
-                  sample = sc$sample,
-                  mt = sc$percent.mt)
+#---- Mitochondrial read mapping per age group
+
+pdf(file = paste0(outdir, 'percent_mt_age_group.pdf'),
+    height = 4,
+    width = 5)
+VlnPlot(sc, feature = 'percent.mt',
+        pt.size = 0,
+        group.by = 'age_group',
+        cols = viridis(length(unique(sc$age_group)))) +
+  theme(text = element_text(size = 8),
+      axis.ticks = element_blank(),
+      axis.text.x = element_text(size = 8, angle = 45),
+      axis.text.y = element_text(size = 8),
+      axis.title.x = element_blank(),
+      axis.title.y = element_text(size = 10)) +
+  labs(y = 'Percent MT mapping') +
+  NoLegend() +
+  ggtitle('')
+dev.off()
 
 
 
+#---- Cell cycle scoring
+
+# Adjust gene sets for marmoset
+s.genes = cc.genes$s.genes
+s.genes = s.genes[s.genes %in% rownames(sc)]
+# Add PRIM1, MLF1IP, RPA2, CCNE2, UBR7, RAD51, BRIP1
+s.genes = c(s.genes, c('ENSCJAG00000010662',
+                       'CENPU',
+                       'ENSCJAG00000009473',
+                       'ENSCJAG00000000011',
+                       'ENSCJAG00000018283',
+                       'ENSCJAG00000020821'))
+
+g2m.genes = cc.genes$g2m.genes
+g2m.genes = g2m.genes[g2m.genes %in% rownames(sc)]
+# Add CKS2, TACC3,  RANGAP1
+g2m.genes = c(g2m.genes, c('ENSCJAG00000007792',
+                           'ENSCJAG00000001805',
+                           'ENSCJAG00000004844'))
+
+sc = CellCycleScoring(sc, s.features = s.genes,
+                      g2m.features = g2m.genes)
+
+
+pdf(file = paste0(outdir, 'cell_cycle_score.pdf'), width = 5, height = 5)
+# S phase score per cell type
+VlnPlot(sc, features = 'S.Score', 
+        pt.size = 0, 
+        group.by = 'integrated_annotations_abbrev', 
+        cols = cell.type.abbrev.colors) +
+  theme(text = element_text(size = 8),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, angle = 90),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank()) +
+  labs(y = 'S cell cycle score') +
+  NoLegend() +
+  ggtitle('')
+# S phase score per age group
+VlnPlot(sc, features = 'S.Score', 
+        pt.size = 0, 
+        group.by = 'age_group', 
+        cols = viridis(length(unique(sc$age_group)))) +
+  theme(text = element_text(size = 8),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, angle = 90),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank()) +
+  labs(y = 'S cell cycle score') +
+  NoLegend() +
+  ggtitle('')
+# G2M score per cell type
+VlnPlot(sc, features = 'G2M.Score', 
+        pt.size = 0, 
+        group.by = 'integrated_annotations_abbrev', 
+        cols = cell.type.abbrev.colors) +
+  theme(text = element_text(size = 8),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, angle = 90),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank()) +
+  labs(y = 'G2M cell cycle score') +
+  NoLegend() +
+  ggtitle('')
+# G2M score per age group
+VlnPlot(sc, features = 'G2M.Score', 
+        pt.size = 0, 
+        group.by = 'age_group', 
+        cols = viridis(length(unique(sc$age_group)))) +
+  theme(text = element_text(size = 8),
+        axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, angle = 90),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank()) +
+  labs(y = 'G2M cell cycle score') +
+  NoLegend() +
+  ggtitle('')
+dev.off()
 
