@@ -158,6 +158,11 @@ sc$age_group_top = factor(sc$age_group_top,
 sc$kidney_function = factor(sc$kidney_function,
 					levels = c('good', 'bad'))
 
+# Order sample IDs based on age
+metadata = sc@meta.data
+age_order = unique(metadata[order(metadata$age),'sample'])
+sc$sample = factor(sc$sample, levels = age_order)
+
 
 # Save data
 saveRDS(sc, file = '../marmoset.cca.integration.filter.reclust.annotated.rds')
