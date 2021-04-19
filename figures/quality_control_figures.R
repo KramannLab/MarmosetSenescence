@@ -203,3 +203,113 @@ VlnPlot(sc, features = 'G2M.Score',
   ggtitle('')
 dev.off()
 
+
+
+#---- Bar charts with distribution of cell types in age groups
+
+data = data.frame(cell = colnames(sc), 
+                  AgeGroup = sc$age_group,
+                  cellType = sc$integrated_annotations_abbrev,
+                  cellTypeTop = sc$integrated_annotations_abbrev_top,
+                  Sample = sc$sample)
+
+
+pdf(file = paste0(outdir, 'cell_type_distribution_barcharts.pdf'), width = 15)
+# Cell type, stacked age
+ggplot(data, aes(x = cellType, fill = as.factor(AgeGroup))) + 
+  geom_bar(position = position_fill(reverse = TRUE)) + 
+  labs(y = 'Proportion', 
+       x = element_blank(), 
+       fill = 'Age group') + 
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, option = 'viridis') +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, 
+                                   angle = 90, 
+                                   hjust = 1),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 10))
+
+# Cell type top, stacked age
+ggplot(data, aes(x = cellTypeTop, fill = as.factor(AgeGroup))) + 
+  geom_bar(position = position_fill(reverse = TRUE)) + 
+  labs(y = 'Proportion', 
+       x = element_blank(), 
+       fill = 'Age group') + 
+  theme_classic() +
+  scale_fill_viridis(discrete = TRUE, option = 'viridis') +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, 
+                                   angle = 90, 
+                                   hjust = 1),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 10))
+
+# Age group, stacked cell type
+ggplot(data, aes(x = AgeGroup, fill = as.factor(cellType))) + 
+  geom_bar(position = position_fill(reverse = TRUE)) + 
+  labs(y = 'Proportion', 
+       x = element_blank(), 
+       fill = 'Cell type') + 
+  theme_classic() +
+  scale_fill_manual(values = cell.type.abbrev.colors) +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, 
+                                   angle = 90, 
+                                   hjust = 1),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 10))
+
+# Age group, stacked cell type top
+ggplot(data, aes(x = AgeGroup, fill = as.factor(cellTypeTop))) + 
+  geom_bar(position = position_fill(reverse = TRUE)) + 
+  labs(y = 'Proportion', 
+       x = element_blank(), 
+       fill = 'Cell type') + 
+  theme_classic() +
+  scale_fill_manual(values = cell.type.abbrev.top.colors) +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, 
+                                   angle = 90, 
+                                   hjust = 1),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 10))
+
+# Per sample, stacked cell type
+ggplot(data, aes(x = Sample, fill = as.factor(cellType))) + 
+  geom_bar(position = position_fill(reverse = TRUE)) + 
+  labs(y = 'Proportion', 
+       x = element_blank(), 
+       fill = 'Cell type') + 
+  theme_classic() +
+  scale_fill_manual(values = cell.type.abbrev.colors) +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, 
+                                   angle = 90, 
+                                   hjust = 1),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 10))
+
+# Per sample, stacked cell type top
+ggplot(data, aes(x = Sample, fill = as.factor(cellTypeTop))) + 
+  geom_bar(position = position_fill(reverse = TRUE)) + 
+  labs(y = 'Proportion', 
+       x = element_blank(), 
+       fill = 'Cell type') + 
+  theme_classic() +
+  scale_fill_manual(values = cell.type.abbrev.top.colors) +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(size = 8, 
+                                   angle = 90, 
+                                   hjust = 1),
+        axis.text.y = element_text(size = 8),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 10))
+dev.off()
+
+
